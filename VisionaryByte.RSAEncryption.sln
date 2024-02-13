@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34525.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisionaryByte.RSAEncryption", "VisionaryByte.RSAEncryption\VisionaryByte.RSAEncryption.csproj", "{780BCFDB-9A65-4783-8124-2F1E4AEEDC81}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{780BCFDB-9A65-4783-8124-2F1E4AEEDC81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{780BCFDB-9A65-4783-8124-2F1E4AEEDC81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{780BCFDB-9A65-4783-8124-2F1E4AEEDC81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{780BCFDB-9A65-4783-8124-2F1E4AEEDC81}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {18EE3CA6-908F-4575-B662-A1BAA8914467}
+	EndGlobalSection
+EndGlobal
