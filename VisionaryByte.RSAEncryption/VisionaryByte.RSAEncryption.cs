@@ -32,9 +32,9 @@ namespace DotNetRSAEncryption
                 using (var txtreader = new StringReader(pemContent))
                 {
                     var pemReader = new PemReader(txtreader);
-                    var keyPair = (RsaKeyParameters)pemReader.ReadObject();
+                    var result = pemReader.ReadObject();
                     var rsaEngine = new Pkcs1Encoding(new RsaEngine());
-                    return new RsaCryptoServiceProvider(rsaEngine, keyPair);
+                    return new RsaCryptoServiceProvider(rsaEngine, result);
                 }
             }
             catch (Exception ex)
@@ -55,9 +55,9 @@ namespace DotNetRSAEncryption
     public class RsaCryptoServiceProvider : IRsaProvider
     {
         private readonly IAsymmetricBlockCipher rsaEngine;
-        private readonly AsymmetricKeyParameter keyPair;
+        private readonly object keyPair;
 
-        public RsaCryptoServiceProvider(IAsymmetricBlockCipher rsaEngine, RsaKeyParameters keyPair)
+        public RsaCryptoServiceProvider(IAsymmetricBlockCipher rsaEngine, object keyPair)
         {
             this.rsaEngine = rsaEngine;
             this.keyPair = keyPair;
@@ -65,26 +65,38 @@ namespace DotNetRSAEncryption
 
         public string EncryptWithPublic(string clearText)
         {
-            if (keyPair.IsPrivate)
+            var cipher = keyPair as AsymmetricCipherKeyPair;
+            var parameter = default(RsaKeyParameters);
+            if (cipher == null)
             {
-                throw new InvalidOperationException("This instance does not contain a public key.");
+                parameter = keyPair as RsaKeyParameters;
+            }
+            if ((parameter != null && parameter.IsPrivate) || (cipher != null && cipher.Private.IsPrivate))
+            {
+                throw new InvalidOperationException("This instance does not contain a private key.");
             }
 
             var bytesToEncrypt = Encoding.UTF8.GetBytes(clearText);
-            rsaEngine.Init(true, keyPair);
+            rsaEngine.Init(true, parameter ?? cipher!.Public);
             var encryptedBytes = rsaEngine.ProcessBlock(bytesToEncrypt, 0, bytesToEncrypt.Length);
             return Convert.ToBase64String(encryptedBytes);
         }
 
         public string DecryptWithPrivate(string encryptedText)
         {
-            if (!keyPair.IsPrivate)
+            var cipher = keyPair as AsymmetricCipherKeyPair;
+            var parameter = default(RsaKeyParameters);
+            if (cipher == null)
+            {
+                parameter = keyPair as RsaKeyParameters;
+            }
+            if ((parameter != null && !parameter.IsPrivate) || (cipher != null && !cipher.Private.IsPrivate))
             {
                 throw new InvalidOperationException("This instance does not contain a private key.");
             }
 
             var bytesToDecrypt = Convert.FromBase64String(encryptedText);
-            rsaEngine.Init(false, keyPair);
+            rsaEngine.Init(false, parameter ?? cipher!.Private);
             var decryptedBytes = rsaEngine.ProcessBlock(bytesToDecrypt, 0, bytesToDecrypt.Length);
             return Encoding.UTF8.GetString(decryptedBytes);
         }
